@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt'; 
+
 const { Schema } = mongoose;
 
 const doctorSchema = new Schema({
@@ -171,27 +173,29 @@ doctorSchema.methods.isAvailable = function(date) {
   return !unavailable;
 };
 
-// Método para comparar senha (em um sistema real, você usaria bcrypt)
-doctorSchema.methods.comparePassword = function(candidatePassword) {
-  // Na implementação real, você usaria algo como:
-  // return bcrypt.compare(candidatePassword, this.password);
-  return candidatePassword === this.password; // Simplificado para exemplo
+// 2. Modifique o método comparePassword para usar bcrypt.compare
+doctorSchema.methods.comparePassword = async function(candidatePassword) {
+  try {
+    // O bcrypt.compare compara a senha fornecida com o hash armazenado
+    return await bcrypt.compare(candidatePassword, this.password);
+  } catch (error) {
+    throw new Error(`Erro ao comparar senha: ${error.message}`);
+  }
 };
 
 // Middleware pre-save para hash de senha (em um sistema real)
-// doctorSchema.pre('save', async function(next) {
-//   // Só faz hash da senha se ela foi modificada (ou é nova)
-//   if (!this.isModified('password')) return next();
-//   
-//   try {
-//     // Gera um salt e hash a senha
-//     const salt = await bcrypt.genSalt(10);
-//     this.password = await bcrypt.hash(this.password, salt);
-//     next();
-//   } catch (error) {
-//     next(error);
-//   }
-// });
+doctorSchema.pre('save', async function(next) {
+// Só faz hash da senha se ela foi modificada (ou é nova)
+   if (!this.isModified('password')) return next(); 
+   try {
+  // Gera um salt e hash a senha
+     const salt = await bcrypt.genSalt(10);
+     this.password = await bcrypt.hash(this.password, salt);
+     next();
+   } catch (error) {
+     next(error);
+   }
+});
 
 const Doctor = mongoose.model('Doctor', doctorSchema);
 
