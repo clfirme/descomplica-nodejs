@@ -1,10 +1,19 @@
 import express from "express";
+import appointmentRoutes from "./AppointmentRoutes.js";
+import doctorRoutes from "./DoctorRoutes.js";
+import pacientRoutes from "./PacientRoutes.js";
+import prescriptionRoutes from "./PrescriptionRoutes.js";
+
 const router = express.Router();
 
-// suas rotas aqui
 router.get("/", (req, res) => {
-    console.log("Hello!"); // Isto apenas registra no console do servidor
-    res.status(200).json({message: "Hello!"}); // Uma única resposta ao cliente
-  });
+  console.log("Hello!");
+  res.status(200).json({message: "Hello!"});
+});
 
-export default router;  // Exportação padrão
+router.use(appointmentRoutes);
+router.use(doctorRoutes);
+router.use(pacientRoutes);
+router.use(prescriptionRoutes);
+
+export default router;
