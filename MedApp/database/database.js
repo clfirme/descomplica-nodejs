@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 // Opção 1: Usando top-level await (como você está fazendo)
 try {
-  await mongoose.connect('mongodb://localhost:27017/MedApp');
+  await mongoose.connect('mongodb://localhost:27017/MedAppDataBase');
   console.log('Conexão inicial com MongoDB estabelecida');
 } catch (error) {
   console.error('Erro ao conectar com MongoDB:', error);
