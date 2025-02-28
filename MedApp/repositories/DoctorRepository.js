@@ -145,6 +145,22 @@ const authenticate = async (crm, password) => {
     }
 };
 
+// Método para buscar médico pelo CRM (usado na autenticação)
+const findByCrm = async (crm, options = {}) => {
+    try {
+      const query = Doctor.findOne({ crm });
+      
+      // Incluir campo password se necessário para autenticação
+      if (options.includePassword) {
+        query.select('+password');
+      }
+      
+      return await query.exec();
+    } catch (error) {
+      throw new Error(`Erro ao buscar médico por CRM: ${error.message}`);
+    }
+  };
+
 const doctorRepository = {
     findAll,
     findById,
@@ -154,7 +170,8 @@ const doctorRepository = {
     findBySpecialty,
     findAvailableByDate,
     getAppointments,
-    authenticate
+    authenticate,
+    findByCrm  // Adicione esta linha aqui
 };
 
 export default doctorRepository;

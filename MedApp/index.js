@@ -4,6 +4,7 @@ import bodyParser from "body-parser"; // Opcional em versões modernas do Expres
 import router from "./routes/router.js";
 import db from "./database/database.js";
 
+
 const app = express();
 
 // Se estiver usando body-parser como módulo separado:

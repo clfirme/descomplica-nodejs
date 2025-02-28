@@ -1,4 +1,5 @@
 import doctorService from '../services/DoctorService.js';
+import jwt from 'jsonwebtoken';
 
 class DoctorController {
   async listAll(req, res) {
@@ -135,6 +136,39 @@ class DoctorController {
       return res.status(200).json({
         message: 'Autenticação bem-sucedida',
         doctor: result.doctor
+      });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+  
+  // Adicionar ao DoctorController existente para o token
+  async login(req, res) {
+    try {
+      const { crm, password } = req.body;
+      
+      // Encontrar o médico pelo CRM
+      const doctor = await doctorService.authenticate(crm, password);
+      
+      if (!doctor.success) {
+        return res.status(401).json({ error: 'Invalid credentials' });
+      }
+      
+      // Gerar o token usando a mesma chave do middleware
+      const token = jwt.sign(
+        { doctorID: doctor.doctor._id },
+        'your-secret-key',
+        { expiresIn: '24h' }
+      );
+      
+      // Retornar o token e informações básicas do médico
+      return res.status(200).json({
+        token,
+        doctor: {
+          id: doctor.doctor._id,
+          name: doctor.doctor.name,
+          specialty: doctor.doctor.specialty
+        }
       });
     } catch (error) {
       return res.status(500).json({ error: error.message });

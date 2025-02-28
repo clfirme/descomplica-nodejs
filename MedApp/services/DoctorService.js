@@ -92,9 +92,40 @@ const getAppointments = async (doctorId) => {
     return doctorRepository.getAppointments(doctorId);
 };
 
+/* Antes do token
 const authenticate = async (crm, password) => {
     return doctorRepository.authenticate(crm, password);
 };
+*/
+
+// Método para autenticar médico (usado no login)
+const authenticate = async (crm, password) => {
+    try {
+      // Buscar o médico pelo CRM, incluindo o campo password
+      const doctor = await doctorRepository.findByCrm(crm, { includePassword: true });
+      
+      // Verificar se o médico existe
+      if (!doctor) {
+        return { success: false };
+      }
+      
+      // Verificar se a senha está correta usando o método comparePassword do modelo
+      const isPasswordValid = await doctor.comparePassword(password);
+      
+      if (!isPasswordValid) {
+        return { success: false };
+      }
+      
+      // Remover a senha antes de retornar o objeto
+      const doctorObj = doctor.toObject();
+      delete doctorObj.password;
+      
+      // Retornar sucesso e dados do médico
+      return { success: true, doctor: doctorObj };
+    } catch (error) {
+      throw new Error(`Erro na autenticação: ${error.message}`);
+    }
+  };
 
 const doctorService = {
     findAll,
