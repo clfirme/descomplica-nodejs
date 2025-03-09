@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "medapp",
   "version": "1.0.0",
   "description": "mini projeto ",
@@ -15,5 +16,9 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.10.1"
+=======
+  "dependencies": {
+    "bcrypt": "^5.1.1"
+>>>>>>> c5ab63f8f604982b7ff59d10e3f489002a42b5ab
   }
 }
